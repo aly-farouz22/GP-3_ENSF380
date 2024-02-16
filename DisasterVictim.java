@@ -1,107 +1,179 @@
 package edu.ucalgary.oop;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class DisasterVictim {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
     private String comments;
-    private int ASSIGNED_SOCIAL_ID;
-    private List<Supply> personalBelongings = new ArrayList<>();
-    private List<FamilyRelation> familyConnections = new ArrayList<>();
-    private List<MedicalRecord> medicalRecords = new ArrayList<>();
-    private String ENTRY_DATE;
+    private int assignedSocialID;
+    private Supply[] personalBelongingsArray;
+    private FamilyRelation[] familyConnectionsArray;
+    private MedicalRecord[] medicalRecordsArray;
+    private String entryDate;
     private String gender;
-    private int counter;
+    private static int nextSocialID = 1;
 
-    public DisasterVictim(String firstName, String ENTRY_DATE) {
+    public DisasterVictim(String firstName, String entryDate) {
+        if (!isValidDateFormat(entryDate)) {
+            throw new IllegalArgumentException("Invalid date format for entry date: " + entryDate);
+        }
         this.firstName = firstName;
-        this.ENTRY_DATE = ENTRY_DATE;
+        this.entryDate = entryDate;
+        this.assignedSocialID = nextSocialID++;
+    }
+    public void setMedicalRecords(MedicalRecord[] medicalRecords) {
+        this.medicalRecordsArray = medicalRecords;
+    }
+
+    public MedicalRecord[] getMedicalRecords() {
+        return medicalRecordsArray;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     public String getFirstName() {
         return firstName;
     }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     public String getLastName() {
         return lastName;
     }
+
     public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    if (!isValidDateFormat(dateOfBirth)) {
+        throw new IllegalArgumentException("Invalid date format for date of birth: " + dateOfBirth);
     }
+    this.dateOfBirth = dateOfBirth;
+}
+private boolean isValidDateFormat(String date) {
+    try {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.parse(date);
+        return true;
+    } catch (ParseException e) {
+        return false;
+    }
+}
+
+
     public String getDateOfBirth() {
         return dateOfBirth;
     }
+
     public void setComments(String comments) {
         this.comments = comments;
     }
+
     public String getComments() {
         return comments;
     }
-    public void setASSIGNED_SOCIAL_ID(int ASSIGNED_SOCIAL_ID) {
-        this.ASSIGNED_SOCIAL_ID = ASSIGNED_SOCIAL_ID;
+
+    public void setAssignedSocialID(int assignedSocialID) {
+        this.assignedSocialID = assignedSocialID;
     }
-    public int getASSIGNED_SOCIAL_ID() {
-        return ASSIGNED_SOCIAL_ID;
+
+    public int getAssignedSocialID() {
+        return assignedSocialID;
     }
-    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
-        this.medicalRecords = medicalRecords;
+
+    public void setFamilyConnections(FamilyRelation[] familyConnections) {
+        this.familyConnectionsArray = familyConnections;
     }
-    public List<MedicalRecord> getMedicalRecords() {
-        return medicalRecords;
+
+    public FamilyRelation[] getFamilyConnections() {
+        return familyConnectionsArray;
     }
-    public void setFamilyConnections(List<FamilyRelation> familyConnections) {
-        this.familyConnections = familyConnections;
+
+    public void setEntryDate(String entryDate) {
+        this.entryDate = entryDate;
     }
-    public List<FamilyRelation> getFamilyConnections() {
-        return familyConnections;
+
+    public String getEntryDate() {
+        return entryDate;
     }
-    public void setENTRY_DATE(String ENTRY_DATE) {
-        this.ENTRY_DATE = ENTRY_DATE;
+
+    public void setPersonalBelongings(Supply[] personalBelongings) {
+        this.personalBelongingsArray = personalBelongings;
     }
-    public String getENTRY_DATE() {
-        return ENTRY_DATE;
+
+    public Supply[] getPersonalBelongings() {
+        return personalBelongingsArray;
     }
-    public void setPersonalBelongings(List<Supply> personalBelongings) {
-        this.personalBelongings = personalBelongings;
-    }
-    public List<Supply> getPersonalBelongings() {
-        return personalBelongings;
-    }
+
     public void setGender(String gender) {
         this.gender = gender;
     }
+
     public String getGender() {
         return gender;
     }
-    public void setCounter(int counter) {
-        this.counter = counter;
-    }
-    public int getCounter() {
-        return counter;
-    }
+
     public void addPersonalBelonging(Supply supply) {
-        personalBelongings.add(supply);
+        if (personalBelongingsArray == null) {
+            personalBelongingsArray = new Supply[1];
+            personalBelongingsArray[0] = supply;
+        } else {
+            Supply[] newArray = Arrays.copyOf(personalBelongingsArray, personalBelongingsArray.length + 1);
+            newArray[personalBelongingsArray.length] = supply;
+            personalBelongingsArray = newArray;
+        }
     }
 
     public void removePersonalBelonging(Supply supply) {
-        personalBelongings.remove(supply);
+        if (personalBelongingsArray != null) {
+            int index = -1;
+            for (int i = 0; i < personalBelongingsArray.length; i++) {
+                if (personalBelongingsArray[i].equals(supply)) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                Supply[] newArray = new Supply[personalBelongingsArray.length - 1];
+                System.arraycopy(personalBelongingsArray, 0, newArray, 0, index);
+                System.arraycopy(personalBelongingsArray, index + 1, newArray, index, personalBelongingsArray.length - index - 1);
+                personalBelongingsArray = newArray;
+            }
+        }
     }
 
     public void addFamilyConnection(FamilyRelation familyRelation) {
-        familyConnections.add(familyRelation);
+        if (familyConnectionsArray == null) {
+            familyConnectionsArray = new FamilyRelation[1];
+            familyConnectionsArray[0] = familyRelation;
+        } else {
+            FamilyRelation[] newArray = Arrays.copyOf(familyConnectionsArray, familyConnectionsArray.length + 1);
+            newArray[familyConnectionsArray.length] = familyRelation;
+            familyConnectionsArray = newArray;
+        }
     }
 
     public void removeFamilyConnection(FamilyRelation familyRelation) {
-        familyConnections.remove(familyRelation);
+        if (familyConnectionsArray != null) {
+            int index = -1;
+            for (int i = 0; i < familyConnectionsArray.length; i++) {
+                if (familyConnectionsArray[i].equals(familyRelation)) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                FamilyRelation[] newArray = new FamilyRelation[familyConnectionsArray.length - 1];
+                System.arraycopy(familyConnectionsArray, 0, newArray, 0, index);
+                System.arraycopy(familyConnectionsArray, index + 1, newArray, index, familyConnectionsArray.length - index - 1);
+                familyConnectionsArray = newArray;
+            }
+
+        }
     }
-    public void addMedicalRecord(MedicalRecord medicalRecord) {
-        medicalRecords.add(medicalRecord);
-    }
-}
+}    
